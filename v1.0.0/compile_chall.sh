@@ -1,0 +1,1 @@
+bash compile.sh main.c chall "-D HEAP_DEBUG_PRINT -m32"

@@ -1,0 +1,14 @@
+Exploit the binary to get a root shell
+
+HINT : | Heap overflow, binlist_unlink exploit to write-what-where primitive |
+
+Binary : ELF in 32 bits
+
+PROTECTIONS :
+-------------------------------------
+ASLR : ON
+PIE : ON
+SSP : ON
+NX for stack : ON
+NX for heap : OFF
+-------------------------------------
