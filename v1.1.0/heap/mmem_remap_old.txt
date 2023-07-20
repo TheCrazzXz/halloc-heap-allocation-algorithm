@@ -1,0 +1,48 @@
+// old mmem_remap
+
+mmemState mmem_remap(mmemData* mmdata, size_t newsize)
+{
+	void* tempMap;
+    void* memNow;
+
+    /* saving memory address before */
+	mmdata->oldptr = mmdata->ptr;
+
+    /* saving memory size and used size before */
+    mmdata->oldSize = mmdata->memSize;
+
+    /* create a temporary buffer  */
+    tempMap = mmap(NULL, mmdata->memSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+    if(tempMap == MAP_FAILED)
+    {
+        return MORE_MEMORY_STATE_FAILED;
+    }
+    /* copying the whole memory to this temporary buffer */
+    memcopy(tempMap, mmdata->ptr, mmdata->memSize);
+
+    /* unmap / delete the previous mem data */
+    if(munmap(mmdata->ptr, mmdata->memSize) != 0)
+    {
+        return MORE_MEMORY_STATE_FAILED;
+    }
+    /* allocate new mem */
+    memNow = mmap(NULL, newsize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+    
+    if(memNow == MAP_FAILED)
+    {
+        return MORE_MEMORY_STATE_FAILED;
+    }
+    mmdata->ptr = memNow;
+
+    /* copying the saved mem to new mem */
+    memcopy(mmdata->ptr, tempMap, mmdata->memSize);
+
+    /* unmap / delete saved mem */
+    if(munmap(tempMap, mmdata->memSize) != 0)
+    {
+        return MORE_MEMORY_STATE_FAILED;
+    }
+    mmdata->memSize = newsize;
+
+    return MORE_MEMORY_STATE_MMAPED;
+}
