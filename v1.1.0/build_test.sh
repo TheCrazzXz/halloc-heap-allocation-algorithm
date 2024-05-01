@@ -1,0 +1,1 @@
+gcc heap/*.c heap_test.c -o heap_test -fPIE -fstack-protector -m32 -g -D HEAP_DEBUG_PRINT
